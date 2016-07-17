@@ -9,6 +9,7 @@
     "compileOnSave": false,
     "files": [
         "bobril/colorPicker.ts",
+        "bobril/components/colorBar.ts",
         "bobril/components/colorPreview.ts",
         "bobril/components/hsvPreview.ts",
         "index.ts",

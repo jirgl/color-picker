@@ -1,14 +1,16 @@
 import * as b from 'bobril';
-import { hsv } from '../lib/colorModels';
+import { hex, hsv } from '../lib/colorModels';
 import * as colorConverter from '../lib/colorConverter';
 import { ColorPreview } from './components/colorPreview';
 import { HsvPreview } from './components/hsvPreview';
+import { ColorBar } from './components/colorBar';
 
 export interface IColorPickerData {
 }
 
 interface IColorPickerCtx extends b.IBobrilCtx {
     data: IColorPickerData;
+    selectedHexColor: hex;
     selectedHsvColor: hsv;
 }
 
@@ -18,8 +20,16 @@ export const ColorPicker = b.createComponent<IColorPickerData>({
     render(ctx: IColorPickerCtx, me: b.IBobrilNode) {
         me.children = [
             HsvPreview({
-                color: '#00ff00', onColorSelect: (hsv: hsv) => {
+                color: ctx.selectedHexColor, onColorSelect: (hsv: hsv) => {
                     ctx.selectedHsvColor = hsv;
+                    b.invalidate(ctx);
+                }
+            }),
+            ColorBar({
+                onColorSelect: (hex: hex) => {
+                    ctx.selectedHexColor = hex;
+                    if (ctx.selectedHsvColor)
+                        ctx.selectedHsvColor.h = colorConverter.rgbToHue(colorConverter.hexToRgb(hex));
                     b.invalidate(ctx);
                 }
             }),
