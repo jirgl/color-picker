@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "reactNamespace": "b"
+    },
+    "compileOnSave": false,
+    "files": [
+        "index.ts",
+        "lib/colorCalculator.ts",
+        "node_modules/bobril/jsx.d.ts"
+    ]
+}
