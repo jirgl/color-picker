@@ -2,34 +2,9 @@ import * as b from 'bobril';
 import { hex } from '../../lib/colorModels';
 import * as colorConverter from '../../lib/colorConverter';
 
-interface IColorData {
-    hue: number;
-    onColorSelect: (hex: hex) => void;
-}
-
-interface IColorCtx extends b.IBobrilCtx {
-    data: IColorData;
-    hex: hex;
-}
-
-const Color = b.createComponent<IColorData>({
-    init(ctx: IColorCtx) {
-        ctx.hex = colorConverter.hsvToHex({ h: ctx.data.hue, s: 1, v: 1 });
-    },
-    render(ctx: IColorCtx, me: b.IBobrilNode) {
-        me.style = {
-            background: ctx.hex,
-            width: 1,
-            height: 10,
-            display: 'inline-block'
-        };
-    },
-    onMouseUp(ctx: IColorCtx, event: b.IBobrilMouseEvent): boolean {
-        ctx.data.onColorSelect(ctx.hex)
-
-        return true;
-    }
-});
+const riderSize = 15;
+const defaultPosition = riderSize;
+const defaultHex = '#ff0000';
 
 export interface IColorBarData {
     onColorSelect: (hex: hex) => void;
@@ -37,21 +12,112 @@ export interface IColorBarData {
 
 interface IColorBarCtx extends b.IBobrilCtx {
     data: IColorBarData;
+    hex: hex;
+    position: number;
+    width: number;
+    touch: boolean;
+    pointerId: number;
 }
 
-function getBar(data: IColorBarData): b.IBobrilNode[] {
-    const colors = [];
-    for (var i = 0; i < 360; i++) {
-        colors.push(Color({ hue: i, onColorSelect: data.onColorSelect }));
-    }
+function updateColor(ctx: IColorBarCtx, position: number): void {
+    ctx.position = position - b.nodePagePos(ctx.me)[0];
+    if (ctx.position < riderSize) ctx.position = riderSize;
+    if (ctx.position > ctx.width - riderSize) ctx.position = ctx.width - riderSize;
 
-    return colors;
+    ctx.hex = colorConverter.hsvToHex({ h: ctx.position / ctx.width * 360, s: 1, v: 1 });
+    ctx.data.onColorSelect(ctx.hex);
+    b.invalidate(ctx);
 }
 
 export const ColorBar = b.createComponent<IColorBarData>({
     init(ctx: IColorBarCtx) {
+        ctx.position = defaultPosition;
+        ctx.hex = defaultHex;
     },
     render(ctx: IColorBarCtx, me: b.IBobrilNode) {
-        me.children = getBar(ctx.data);//todo need optimalization
+        const rgb = colorConverter.hexToRgb(ctx.hex);
+        me.children = b.styledDiv([
+            {
+                tag: 'svg',
+                style: {
+                    width: '100%',
+                    height: riderSize * 2,
+                    position: 'absolute',
+                    top: -11
+                },
+                children: [
+                    {
+                        tag: 'circle',
+                        attrs: {
+                            cx: ctx.position,
+                            cy: riderSize,
+                            r: riderSize,
+                            fill: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.3)'
+                        }
+                    },
+                    {
+                        tag: 'circle',
+                        attrs: {
+                            cx: ctx.position,
+                            cy: riderSize,
+                            r: riderSize / 2 - 1,
+                            fill: ctx.hex
+                        }
+                    }
+                ]
+            },
+            b.styledDiv(null, {
+                background: 'linear-gradient(to right, ' +
+                'rgb(255, 0, 0) 0%, rgb(255, 255, 0) 17%, rgb(0, 255, 0) 33%, rgb(0, 255, 255) 50%, ' +
+                'rgb(0, 0, 255) 67%, rgb(255, 0, 255) 83%, rgb(255, 0, 0) 100%)',
+                height: 5,
+                marginTop: 10,
+                marginBottom: 10,
+                marginLeft: riderSize,
+                marginRight: riderSize
+            })
+        ], { position: 'relative' });
+    },
+    postInitDom(ctx: IColorBarCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
+        ctx.width = element.offsetWidth;
+        updateColor(ctx, ctx.position);
+    },
+    postUpdateDom(ctx: IColorBarCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
+        ctx.width = element.offsetWidth;
+    },
+    onPointerDown(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
+        if (!ctx.touch) {
+            ctx.touch = true;
+            updateColor(ctx, event.x);
+            ctx.pointerId = event.id;
+            b.registerMouseOwner(ctx);
+            b.focus(ctx.me);
+            return true;
+        }
+        return false;
+    },
+    onPointerMove(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
+        if (ctx.touch && ctx.pointerId == event.id) {
+            updateColor(ctx, event.x);
+            return true;
+        }
+        return false;
+    },
+    onPointerUp(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
+        if (ctx.touch && ctx.pointerId == event.id) {
+            ctx.touch = false;
+            b.releaseMouseOwner();
+            b.invalidate(ctx);
+            return true;
+        }
+        return false;
+    },
+    onPointerCancel(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
+        if (ctx.touch && ctx.pointerId == event.id) {
+            ctx.touch = false;
+            b.releaseMouseOwner();
+            b.invalidate(ctx);
+        }
+        return false;
     }
 });
