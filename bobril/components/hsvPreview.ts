@@ -2,8 +2,7 @@ import * as b from 'bobril';
 import * as colorConverter from '../../lib/colorConverter';
 import { hex, hsv } from '../../lib/colorModels';
 
-const width = 200;
-const height = 100;
+const height = 150;
 
 export interface IHsvPreviewData {
     color: hex;
@@ -20,7 +19,7 @@ function getLayer(background: string): b.IBobrilNode {
     return b.styledDiv(null, {
         background: background,
         position: 'absolute',
-        width: width,
+        width: '100%',
         height: height
     });
 }
@@ -39,7 +38,7 @@ export const HsvPreview = b.createComponent<IHsvPreviewData>({
             getLayer(d.color),
             getLayer('linear-gradient(to right, rgb(255, 255, 255), rgba(255, 255, 255, 0))'),//saturation effect
             getLayer('linear-gradient(to top, rgb(0, 0, 0), rgba(0, 0, 0, 0))')//value effect
-        ], { position: 'relative', width: 100, height: 100 });
+        ], { position: 'relative', height: height });
     },
     postInitDom(ctx: IHsvPreviewCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
         setOffset(ctx, element);
@@ -52,11 +51,11 @@ export const HsvPreview = b.createComponent<IHsvPreviewData>({
         const s = event.x - ctx.leftOffset;
         const v = event.y - ctx.topOffset;
 
-        d.onColorSelect({
+        /*d.onColorSelect({
             h: colorConverter.rgbToHue(colorConverter.hexToRgb(d.color)),
             s: s / width,
             v: 1 - v / height
-        });
+        });*/
 
         return true;
     }

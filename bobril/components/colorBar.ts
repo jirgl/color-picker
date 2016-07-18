@@ -43,7 +43,7 @@ export const ColorBar = b.createComponent<IColorBarData>({
                     width: '100%',
                     height: riderSize * 2,
                     position: 'absolute',
-                    top: -11
+                    top: -12
                 },
                 children: [
                     {

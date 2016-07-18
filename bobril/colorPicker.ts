@@ -18,22 +18,22 @@ export const ColorPicker = b.createComponent<IColorPickerData>({
     init(ctx: IColorPickerCtx) {
     },
     render(ctx: IColorPickerCtx, me: b.IBobrilNode) {
-        me.children = [
-            HsvPreview({
+        me.children = b.styledDiv([
+            b.styledDiv(HsvPreview({
                 color: ctx.selectedHexColor, onColorSelect: (hsv: hsv) => {
                     ctx.selectedHsvColor = hsv;
                     b.invalidate(ctx);
                 }
-            }),
-            ColorBar({
+            }), { marginLeft: 5, marginRight: 5 }),
+            b.styledDiv(ColorBar({
                 onColorSelect: (hex: hex) => {
                     ctx.selectedHexColor = hex;
                     if (ctx.selectedHsvColor)
                         ctx.selectedHsvColor.h = colorConverter.rgbToHue(colorConverter.hexToRgb(hex));
                     b.invalidate(ctx);
                 }
-            }),
+            }), { marginTop: 20 }),
             ctx.selectedHsvColor && ColorPreview({ color: colorConverter.hsvToHex(ctx.selectedHsvColor) })
-        ]
+        ], { padding: 10 });
     }
 });
