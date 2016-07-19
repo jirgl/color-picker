@@ -11,3 +11,10 @@ export declare type rgb = {
     g: number;
     b: number;
 };
+
+export declare type rgba = {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+};
