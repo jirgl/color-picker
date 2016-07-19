@@ -22,10 +22,10 @@ function getStringValue(color: hex | rgb | rgba): string {
     if (typeof (color) === 'string') {
         stringValue = <hex>color;
     } else if (typeof (color) === 'object') {
-        if (<rgba>color) {
+        if (color['a']) {
             let rgba = <rgba>color;
             stringValue = 'rgba(' + rgba.r + ',' + rgba.g + ',' + rgba.b + ', ' + rgba.a + ')';
-        } else if (<rgb>color) {
+        } else {
             let rgb = <rgb>color;
             stringValue = 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')';
         }
