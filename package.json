@@ -19,6 +19,7 @@
   "author": "Jakub Jirgl",
   "license": "ISC",
   "dependencies": {
-    "bobril": "^4.43.0"
+    "bobril": "^4.43.0",
+    "bobril-m": "*"
   }
 }
