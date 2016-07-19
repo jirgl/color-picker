@@ -1,5 +1,5 @@
 import * as b from 'bobril';
-import { ColorRider, riderSize } from './colorRider';
+import { ColorRider } from './colorRider';
 import * as colorConverter from '../../lib/colorConverter';
 import { hex, hsv } from '../../lib/colorModels';
 

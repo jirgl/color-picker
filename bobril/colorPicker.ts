@@ -5,35 +5,42 @@ import { ColorPreview } from './components/colorPreview';
 import { HsvPreview } from './components/hsvPreview';
 import { ColorBar } from './components/colorBar';
 
+const defaultColor = { h: 115, s: 1, v: 1 };
+
 export interface IColorPickerData {
 }
 
 interface IColorPickerCtx extends b.IBobrilCtx {
     data: IColorPickerData;
-    selectedHexColor: hex;
-    selectedHsvColor: hsv;
+    hue: number;
+    currentPreviewColor: hex;
+    newPreviewColor: hex;
 }
 
 export const ColorPicker = b.createComponent<IColorPickerData>({
     init(ctx: IColorPickerCtx) {
+        ctx.hue = defaultColor.h;
+        ctx.currentPreviewColor = colorConverter.hsvToHex(defaultColor);
+        ctx.newPreviewColor = colorConverter.hsvToHex(defaultColor);
     },
     render(ctx: IColorPickerCtx, me: b.IBobrilNode) {
         me.children = b.styledDiv([
             b.styledDiv(HsvPreview({
-                color: ctx.selectedHexColor, onColorSelect: (hsv: hsv) => {
-                    ctx.selectedHsvColor = hsv;
+                hsv: { h: ctx.hue, s: 1, v: 1 },
+                onColorSelect: (hsv: hsv) => {
+                    ctx.newPreviewColor = colorConverter.hsvToHex(hsv);
                     b.invalidate(ctx);
                 }
             }), { marginLeft: 5, marginRight: 5 }),
             b.styledDiv(ColorBar({
-                onColorSelect: (hex: hex) => {
-                    ctx.selectedHexColor = hex;
-                    if (ctx.selectedHsvColor)
-                        ctx.selectedHsvColor.h = colorConverter.rgbToHue(colorConverter.hexToRgb(hex));
+                hue: ctx.hue,
+                onColorSelect: (hue: number) => {
+                    ctx.hue = hue;
                     b.invalidate(ctx);
                 }
             }), { marginTop: 20 }),
-            ctx.selectedHsvColor && ColorPreview({ color: colorConverter.hsvToHex(ctx.selectedHsvColor) })
+            ColorPreview({ color: ctx.currentPreviewColor }),
+            ColorPreview({ color: ctx.newPreviewColor })
         ], { padding: 10 });
     }
 });

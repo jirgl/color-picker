@@ -1,4 +1,4 @@
-import { hex, hsv, rgb } from './colorModels';
+import { hex, hsv, rgb, rgba } from './colorModels';
 
 export function rgbToHex(rgb: rgb): hex {
     let red = rgb.r.toString(16);
@@ -8,6 +8,19 @@ export function rgbToHex(rgb: rgb): hex {
     red = red.length < 2 ? '0' + red : red;
     green = green.length < 2 ? '0' + green : green;
     blue = blue.length < 2 ? '0' + blue : blue;
+    return '#' + red + green + blue;
+}
+
+export function rgbaToHex(rgba: rgba): hex {
+    let red = rgba.r.toString(16);
+    let green = rgba.g.toString(16);
+    let blue = rgba.b.toString(16);
+    let alpha = rgba.a.toString(16);
+
+    red = red.length < 2 ? '0' + red : red;
+    green = green.length < 2 ? '0' + green : green;
+    blue = blue.length < 2 ? '0' + blue : blue;
+    alpha = alpha.length < 2 ? '0' + alpha : alpha;
     return '#' + red + green + blue;
 }
 
@@ -21,6 +34,10 @@ export function hexToRgb(hex: hex): rgb {
 }
 
 export function hsvToHex(hsv: hsv): hex {
+    return rgbToHex(hsvToRgb(hsv));
+}
+
+export function hsvToRgb(hsv: hsv): rgb {
     const c = hsv.v * hsv.s;
     const x = c * (1 - Math.abs((hsv.h / 60) % 2 - 1));
     const m = hsv.v - c;
@@ -43,7 +60,7 @@ export function hsvToHex(hsv: hsv): hex {
     rgb.r = Math.round((rgb.r + m) * 255);
     rgb.g = Math.round((rgb.g + m) * 255);
     rgb.b = Math.round((rgb.b + m) * 255);
-    return rgbToHex(rgb);
+    return rgb;
 }
 
 export function rgbToHue(rgb: rgb): number {

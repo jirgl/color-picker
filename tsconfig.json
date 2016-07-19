@@ -11,6 +11,7 @@
         "bobril/colorPicker.ts",
         "bobril/components/colorBar.ts",
         "bobril/components/colorPreview.ts",
+        "bobril/components/colorRider.ts",
         "bobril/components/hsvPreview.ts",
         "index.ts",
         "lib/colorConverter.ts",
