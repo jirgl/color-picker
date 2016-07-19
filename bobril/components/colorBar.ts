@@ -1,18 +1,15 @@
 import * as b from 'bobril';
-import { hex } from '../../lib/colorModels';
+import { ColorRider, riderSize } from './colorRider';
 import * as colorConverter from '../../lib/colorConverter';
 
-const riderSize = 15;
-const defaultPosition = riderSize;
-const defaultHex = '#ff0000';
-
 export interface IColorBarData {
-    onColorSelect: (hex: hex) => void;
+    hue: number;
+    onColorSelect: (hue: number) => void;
 }
 
 interface IColorBarCtx extends b.IBobrilCtx {
     data: IColorBarData;
-    hex: hex;
+    hue: number;
     position: number;
     width: number;
     touch: boolean;
@@ -24,48 +21,22 @@ function updateColor(ctx: IColorBarCtx, position: number): void {
     if (ctx.position < riderSize) ctx.position = riderSize;
     if (ctx.position > ctx.width - riderSize) ctx.position = ctx.width - riderSize;
 
-    ctx.hex = colorConverter.hsvToHex({ h: ctx.position / ctx.width * 360, s: 1, v: 1 });
-    ctx.data.onColorSelect(ctx.hex);
+    ctx.hue = ctx.position / ctx.width * 360;
+    ctx.data.onColorSelect(ctx.hue);
     b.invalidate(ctx);
 }
 
 export const ColorBar = b.createComponent<IColorBarData>({
-    init(ctx: IColorBarCtx) {
-        ctx.position = defaultPosition;
-        ctx.hex = defaultHex;
-    },
     render(ctx: IColorBarCtx, me: b.IBobrilNode) {
-        const rgb = colorConverter.hexToRgb(ctx.hex);
+        const rgb = colorConverter.hsvToRgb({ h: ctx.hue, s: 1, v: 1 });
         me.children = b.styledDiv([
-            {
-                tag: 'svg',
-                style: {
-                    width: '100%',
-                    height: riderSize * 2,
-                    position: 'absolute',
-                    top: -12
-                },
-                children: [
-                    {
-                        tag: 'circle',
-                        attrs: {
-                            cx: ctx.position,
-                            cy: riderSize,
-                            r: riderSize,
-                            fill: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.3)'
-                        }
-                    },
-                    {
-                        tag: 'circle',
-                        attrs: {
-                            cx: ctx.position,
-                            cy: riderSize,
-                            r: riderSize / 2 - 1,
-                            fill: ctx.hex
-                        }
-                    }
-                ]
-            },
+            b.styledDiv(ColorRider({
+                height: riderSize * 2,
+                x: ctx.position,
+                y: riderSize,
+                innerColor: rgb,
+                outerColor: { r: rgb.r, g: rgb.g, b: rgb.b, a: 0.3 }
+            }), { width: '100%', position: 'absolute', top: -12 }),
             b.styledDiv(null, {
                 background: 'linear-gradient(to right, ' +
                 'rgb(255, 0, 0) 0%, rgb(255, 255, 0) 17%, rgb(0, 255, 0) 33%, rgb(0, 255, 255) 50%, ' +
@@ -80,7 +51,7 @@ export const ColorBar = b.createComponent<IColorBarData>({
     },
     postInitDom(ctx: IColorBarCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
         ctx.width = element.offsetWidth;
-        updateColor(ctx, ctx.position);
+        updateColor(ctx, ctx.data.hue / 360 * ctx.width);
     },
     postUpdateDom(ctx: IColorBarCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
         ctx.width = element.offsetWidth;
