@@ -1,7 +1,7 @@
 import * as b from 'bobril';
 import * as m from 'bobril-m';
-import { hex, hsv } from '../lib/colorModels';
-import * as colorConverter from '../lib/colorConverter';
+import { hex, hsv } from 'jirgl-graphics';
+import * as graphics from 'jirgl-graphics';
 import { ColorPreview } from './components/colorPreview';
 import { HsvPreview } from './components/hsvPreview';
 import { ColorBar } from './components/colorBar';
@@ -25,16 +25,16 @@ export const ColorPicker = b.createComponent<IColorPickerData>({
         ctx.red = defaultColor.r;
         ctx.green = defaultColor.g;
         ctx.blue = defaultColor.b;
-        ctx.currentPreviewColor = colorConverter.rgbToHex(defaultColor);
-        ctx.newPreviewColor = colorConverter.rgbToHex(defaultColor);
+        ctx.currentPreviewColor = graphics.rgbToHex(defaultColor);
+        ctx.newPreviewColor = graphics.rgbToHex(defaultColor);
     },
     render(ctx: IColorPickerCtx, me: b.IBobrilNode) {
         me.children = b.styledDiv([
             b.styledDiv(HsvPreview({
-                hsv: { h: colorConverter.rgbToHue({ r: ctx.red, g: ctx.green, b: ctx.blue }), s: 1, v: 1 },
+                hsv: { h: graphics.rgbToHue({ r: ctx.red, g: ctx.green, b: ctx.blue }), s: 1, v: 1 },
                 onColorSelect: (hsv: hsv) => {
-                    ctx.newPreviewColor = colorConverter.hsvToHex(hsv);
-                    const rgb = colorConverter.hsvToRgb(hsv);
+                    ctx.newPreviewColor = graphics.hsvToHex(hsv);
+                    const rgb = graphics.hsvToRgb(hsv);
                     ctx.red = rgb.r;
                     ctx.green = rgb.g;
                     ctx.blue = rgb.b;
@@ -42,9 +42,9 @@ export const ColorPicker = b.createComponent<IColorPickerData>({
                 }
             }), { marginLeft: 5, marginRight: 5 }),
             b.styledDiv(ColorBar({
-                hue: colorConverter.rgbToHue({ r: ctx.red, g: ctx.green, b: ctx.blue }),
+                hue: graphics.rgbToHue({ r: ctx.red, g: ctx.green, b: ctx.blue }),
                 onColorSelect: (hue: number) => {
-                    const rgb = colorConverter.hsvToRgb({ h: hue, s: 1, v: 1 });
+                    const rgb = graphics.hsvToRgb({ h: hue, s: 1, v: 1 });
                     ctx.red = rgb.r;
                     ctx.green = rgb.g;
                     ctx.blue = rgb.b;

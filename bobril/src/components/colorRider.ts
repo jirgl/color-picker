@@ -1,5 +1,5 @@
 import * as b from 'bobril';
-import { hex, rgb, rgba } from '../../lib/colorModels';
+import { hex, rgb, rgba } from 'jirgl-graphics';
 
 export const riderSize = 15;
 const innerRadius = riderSize / 2 - 1;

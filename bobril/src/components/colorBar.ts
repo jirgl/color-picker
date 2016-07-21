@@ -1,6 +1,6 @@
 import * as b from 'bobril';
+import * as graphics from 'jirgl-graphics';
 import { ColorRider, riderSize } from './colorRider';
-import * as colorConverter from '../../lib/colorConverter';
 
 export interface IColorBarData {
     hue: number;
@@ -28,7 +28,7 @@ function updateColor(ctx: IColorBarCtx, position: number): void {
 
 export const ColorBar = b.createComponent<IColorBarData>({
     render(ctx: IColorBarCtx, me: b.IBobrilNode) {
-        const rgb = colorConverter.hsvToRgb({ h: ctx.hue, s: 1, v: 1 });
+        const rgb = graphics.hsvToRgb({ h: ctx.hue, s: 1, v: 1 });
         me.children = b.styledDiv([
             b.styledDiv(ColorRider({
                 height: riderSize * 2,

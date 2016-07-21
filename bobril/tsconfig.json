@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "reactNamespace": "b"
+    },
+    "compileOnSave": false,
+    "files": [
+        "index.ts",
+        "node_modules/bobril/jsx.d.ts",
+        "src/colorPicker.ts",
+        "src/components/colorBar.ts",
+        "src/components/colorPreview.ts",
+        "src/components/colorRider.ts",
+        "src/components/hsvPreview.ts"
+    ]
+}

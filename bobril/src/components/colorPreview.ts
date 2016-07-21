@@ -1,5 +1,5 @@
 import * as b from 'bobril';
-import { hex } from '../../lib/colorModels';
+import { hex } from 'jirgl-graphics';
 
 export interface IColorPreviewData {
     color: hex;

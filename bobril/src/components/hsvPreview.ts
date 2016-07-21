@@ -1,7 +1,7 @@
 import * as b from 'bobril';
+import { hsv } from 'jirgl-graphics';
+import * as graphics from 'jirgl-graphics';
 import { ColorRider } from './colorRider';
-import * as colorConverter from '../../lib/colorConverter';
-import { hex, hsv } from '../../lib/colorModels';
 
 const height = 150;
 
@@ -55,7 +55,7 @@ export const HsvPreview = b.createComponent<IHsvPreviewData>({
     },
     render(ctx: IHsvPreviewCtx, me: b.IBobrilNode) {
         me.children = b.styledDiv([
-            getLayer(colorConverter.hsvToHex(ctx.data.hsv)),
+            getLayer(graphics.hsvToHex(ctx.data.hsv)),
             getLayer('linear-gradient(to right, rgb(255, 255, 255), rgba(255, 255, 255, 0))'),//saturation effect
             getLayer('linear-gradient(to top, rgb(0, 0, 0), rgba(0, 0, 0, 0))'),//value effect
             b.styledDiv(ColorRider({
