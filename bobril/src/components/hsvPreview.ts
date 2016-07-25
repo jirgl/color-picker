@@ -13,7 +13,6 @@ export interface IHsvPreviewData {
 interface IHsvPreviewCtx extends b.IBobrilCtx {
     data: IHsvPreviewData;
     hsv: hsv;
-    position: [number, number];
     width: number;
     height: number;
     touch: boolean;
@@ -31,37 +30,35 @@ function getLayer(background: string): b.IBobrilNode {
 
 function updateColor(ctx: IHsvPreviewCtx, x: number, y: number): void {
     const nodePagePos = b.nodePagePos(ctx.me);
-    ctx.position[0] = x - nodePagePos[0];
-    ctx.position[1] = y - nodePagePos[1];
-    if (ctx.position[0] < 0) ctx.position[0] = 0;
-    if (ctx.position[1] < 0) ctx.position[1] = 0;
-    if (ctx.position[0] > ctx.width) ctx.position[0] = ctx.width;
-    if (ctx.position[1] > ctx.height) ctx.position[1] = ctx.height;
+    let position = [x - nodePagePos[0], y - nodePagePos[1]];
+    if (position[0] < 0) position[0] = 0;
+    if (position[1] < 0) position[1] = 0;
+    if (position[0] > ctx.width) position[0] = ctx.width;
+    if (position[1] > ctx.height) position[1] = ctx.height;
 
-    const s = ctx.position[0];
-    const v = ctx.position[1];
+    const s = position[0];
+    const v = position[1];
     ctx.hsv = {
         h: ctx.data.hsv.h,
         s: s / ctx.width,
         v: 1 - v / ctx.height
     };
     ctx.data.onColorSelect(ctx.hsv);
-    b.invalidate(ctx);
 }
 
 export const HsvPreview = b.createComponent<IHsvPreviewData>({
     init(ctx: IHsvPreviewCtx) {
-        ctx.position = [0, 0];
+        ctx.width = ctx.height = 0;
     },
     render(ctx: IHsvPreviewCtx, me: b.IBobrilNode) {
         me.children = b.styledDiv([
-            getLayer(graphics.hsvToHex(ctx.data.hsv)),
+            getLayer(graphics.hsvToHex({ h: ctx.data.hsv.h, s: 1, v: 1 })),
             getLayer('linear-gradient(to right, rgb(255, 255, 255), rgba(255, 255, 255, 0))'),//saturation effect
             getLayer('linear-gradient(to top, rgb(0, 0, 0), rgba(0, 0, 0, 0))'),//value effect
             b.styledDiv(ColorRider({
                 height: ctx.height,
-                x: ctx.position[0],
-                y: ctx.position[1],
+                x: ctx.width * ctx.data.hsv.s,
+                y: ctx.height * (1 - ctx.data.hsv.v),
                 outerColor: { r: 230, g: 230, b: 230, a: 0.3 }
             }), { width: '100%', position: 'absolute' })
         ], { position: 'relative', height: height });

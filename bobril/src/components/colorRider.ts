@@ -46,8 +46,8 @@ export const ColorRider = b.createComponent<IColorRiderData>({
                 {
                     tag: 'circle',
                     attrs: {
-                        cx: d.x,
-                        cy: d.y,
+                        cx: d.x || 0,
+                        cy: d.y || 0,
                         r: outerRadius,
                         fill: 'transparent',
                         stroke: getStringValue(d.outerColor),
@@ -57,8 +57,8 @@ export const ColorRider = b.createComponent<IColorRiderData>({
                 {
                     tag: 'circle',
                     attrs: {
-                        cx: d.x,
-                        cy: d.y,
+                        cx: d.x || 0,
+                        cy: d.y || 0,
                         r: innerRadius,
                         fill: d.innerColor ? getStringValue(d.innerColor) : 'transparent',
                         stroke: 'black',

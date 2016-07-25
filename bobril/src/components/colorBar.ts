@@ -9,30 +9,29 @@ export interface IColorBarData {
 
 interface IColorBarCtx extends b.IBobrilCtx {
     data: IColorBarData;
-    hue: number;
-    position: number;
     width: number;
     touch: boolean;
     pointerId: number;
 }
 
-function updateColor(ctx: IColorBarCtx, position: number): void {
-    ctx.position = position - b.nodePagePos(ctx.me)[0];
-    if (ctx.position < riderSize) ctx.position = riderSize;
-    if (ctx.position > ctx.width - riderSize) ctx.position = ctx.width - riderSize;
+function getPosition(ctx: IColorBarCtx): number {
+    let position = ctx.data.hue / 360 * ctx.width;
+    if (position < riderSize) position = riderSize;
+    if (position > ctx.width - riderSize) position = ctx.width - riderSize;
+    return position;
+}
 
-    ctx.hue = ctx.position / ctx.width * 360;
-    ctx.data.onColorSelect(ctx.hue);
-    b.invalidate(ctx);
+function updateColor(ctx: IColorBarCtx, position: number): void {
+    ctx.data.onColorSelect(position / ctx.width * 360);
 }
 
 export const ColorBar = b.createComponent<IColorBarData>({
     render(ctx: IColorBarCtx, me: b.IBobrilNode) {
-        const rgb = graphics.hsvToRgb({ h: ctx.hue, s: 1, v: 1 });
+        const rgb = graphics.hsvToRgb({ h: ctx.data.hue, s: 1, v: 1 });
         me.children = b.styledDiv([
             b.styledDiv(ColorRider({
                 height: riderSize * 2,
-                x: ctx.position,
+                x: getPosition(ctx),
                 y: riderSize,
                 innerColor: rgb,
                 outerColor: { r: rgb.r, g: rgb.g, b: rgb.b, a: 0.3 }
@@ -59,7 +58,7 @@ export const ColorBar = b.createComponent<IColorBarData>({
     onPointerDown(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
         if (!ctx.touch) {
             ctx.touch = true;
-            updateColor(ctx, event.x);
+            updateColor(ctx, event.x - b.nodePagePos(ctx.me)[0]);
             ctx.pointerId = event.id;
             b.registerMouseOwner(ctx);
             b.focus(ctx.me);
@@ -69,7 +68,7 @@ export const ColorBar = b.createComponent<IColorBarData>({
     },
     onPointerMove(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
         if (ctx.touch && ctx.pointerId == event.id) {
-            updateColor(ctx, event.x);
+            updateColor(ctx, event.x - b.nodePagePos(ctx.me)[0]);
             return true;
         }
         return false;
