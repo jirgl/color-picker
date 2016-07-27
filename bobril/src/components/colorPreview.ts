@@ -6,5 +6,5 @@ export interface IColorPreviewData {
 }
 
 export const ColorPreview = (data: IColorPreviewData) => {
-    return b.styledDiv(null, { background: data.color, width: 30, height: 30 });
+    return b.styledDiv(null, { background: data.color, width: '100%', height: 30 });
 }
