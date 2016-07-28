@@ -15,14 +15,14 @@ interface IColorBarCtx extends b.IBobrilCtx {
 }
 
 function getPosition(ctx: IColorBarCtx): number {
-    let position = ctx.data.hue / 360 * ctx.width;
+    let position = (ctx.data.hue + riderSize) / 360 * (ctx.width - riderSize * 2);
     if (position < riderSize) position = riderSize;
     if (position > ctx.width - riderSize) position = ctx.width - riderSize;
     return position;
 }
 
 function updateColor(ctx: IColorBarCtx, position: number): void {
-    ctx.data.onColorSelect(position / ctx.width * 360);
+    ctx.data.onColorSelect((position - riderSize) / (ctx.width - riderSize * 2) * 360);
 }
 
 export const ColorBar = b.createComponent<IColorBarData>({
@@ -67,8 +67,12 @@ export const ColorBar = b.createComponent<IColorBarData>({
         return false;
     },
     onPointerMove(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
+        const position = event.x - b.nodePagePos(ctx.me)[0];
+        if (position < riderSize || position > ctx.width - riderSize)
+            return false;
+
         if (ctx.touch && ctx.pointerId == event.id) {
-            updateColor(ctx, event.x - b.nodePagePos(ctx.me)[0]);
+            updateColor(ctx, position);
             return true;
         }
         return false;
