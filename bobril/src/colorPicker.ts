@@ -6,7 +6,7 @@ import { ColorPreview } from './components/colorPreview';
 import { HsvPreview } from './components/hsvPreview';
 import { ColorBar } from './components/colorBar';
 
-const defaultColor = { r: 0, g: 200, b: 0 };
+const defaultColor = { r: 255, g: 255, b: 255 };
 const baseMargin = b.styleDef({ marginLeft: 5, marginRight: 5 });
 
 export interface IColorPickerData {
