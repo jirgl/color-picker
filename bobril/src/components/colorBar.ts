@@ -50,7 +50,6 @@ export const ColorBar = b.createComponent<IColorBarData>({
     },
     postInitDom(ctx: IColorBarCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
         ctx.width = element.offsetWidth;
-        updateColor(ctx, ctx.data.hue / 360 * ctx.width);
     },
     postUpdateDom(ctx: IColorBarCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
         ctx.width = element.offsetWidth;
