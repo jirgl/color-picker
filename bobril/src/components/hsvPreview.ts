@@ -28,14 +28,18 @@ function getLayer(background: string): b.IBobrilNode {
     });
 }
 
-function updateColor(ctx: IHsvPreviewCtx, x: number, y: number): void {
+function calculateRelativePosition(ctx: IHsvPreviewCtx, position: [number, number]): [number, number] {
     const nodePagePos = b.nodePagePos(ctx.me);
-    let position = [x - nodePagePos[0], y - nodePagePos[1]];
-    if (position[0] < 0) position[0] = 0;
-    if (position[1] < 0) position[1] = 0;
-    if (position[0] > ctx.width) position[0] = ctx.width;
-    if (position[1] > ctx.height) position[1] = ctx.height;
+    let relPosition: [number, number] = [position[0] - nodePagePos[0], position[1] - nodePagePos[1]];
+    if (relPosition[0] < 0) relPosition[0] = 0;
+    if (relPosition[1] < 0) relPosition[1] = 0;
+    if (relPosition[0] > ctx.width) relPosition[0] = ctx.width;
+    if (relPosition[1] > ctx.height) relPosition[1] = ctx.height;
 
+    return relPosition;
+}
+
+function updateColor(ctx: IHsvPreviewCtx, position: [number, number]): void {
     const s = position[0];
     const v = position[1];
     ctx.hsv = {
@@ -66,7 +70,7 @@ export const HsvPreview = b.createComponent<IHsvPreviewData>({
     postInitDom(ctx: IHsvPreviewCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
         ctx.width = element.offsetWidth;
         ctx.height = element.offsetHeight;
-        updateColor(ctx, ctx.data.hsv.s * ctx.width, ctx.data.hsv.v * height);
+        updateColor(ctx, [ctx.data.hsv.s * ctx.width, height - ctx.data.hsv.v * height]);
     },
     postUpdateDom(ctx: IHsvPreviewCtx, me: b.IBobrilCacheNode, element: HTMLElement) {
         ctx.width = element.offsetWidth;
@@ -75,7 +79,7 @@ export const HsvPreview = b.createComponent<IHsvPreviewData>({
     onPointerDown(ctx: IHsvPreviewCtx, event: b.IBobrilPointerEvent): boolean {
         if (!ctx.touch) {
             ctx.touch = true;
-            updateColor(ctx, event.x, event.y);
+            updateColor(ctx, calculateRelativePosition(ctx, [event.x, event.y]));
             ctx.pointerId = event.id;
             b.registerMouseOwner(ctx);
             b.focus(ctx.me);
@@ -84,8 +88,9 @@ export const HsvPreview = b.createComponent<IHsvPreviewData>({
         return false;
     },
     onPointerMove(ctx: IHsvPreviewCtx, event: b.IBobrilPointerEvent): boolean {
+        const nodePagePos = b.nodePagePos(ctx.me);
         if (ctx.touch && ctx.pointerId == event.id) {
-            updateColor(ctx, event.x, event.y);
+            updateColor(ctx, calculateRelativePosition(ctx, [event.x, event.y]));
             return true;
         }
         return false;
