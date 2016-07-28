@@ -68,6 +68,17 @@ function updateColorModels(ctx: IColorPickerCtx, red: number, green: number, blu
 function getRgbTextFields(ctx: IColorPickerCtx): b.IBobrilNode {
     return b.styledDiv([
         b.styledDiv(m.TextField({
+            labelText: 'hex', value: ctx.newPreviewColor, onChange: (value) => {
+                const rgb = graphics.hexToRgb(value)
+                if (!rgb) {
+                    ctx.newPreviewColor = value;
+                    b.invalidate(ctx);
+                    return;
+                }
+                updateColorModels(ctx, rgb.r, rgb.g, rgb.b);
+            }
+        }), baseMargin, { flex: 1 }),
+        b.styledDiv(m.TextField({
             labelText: 'red', value: ctx.rgb.r.toString(), onChange: (value) => {
                 updateColorModels(ctx, convertInputValue(value), ctx.rgb.g, ctx.rgb.b);
             }
