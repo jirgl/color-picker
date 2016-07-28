@@ -48,37 +48,38 @@ function getColorBar(ctx: IColorPickerCtx): b.IBobrilNode {
     }), { marginTop: 20 });
 }
 
+function convertInputValue(value: string): number {
+    let numValue = parseInt(value);
+    if (!numValue) return 0;
+    numValue = numValue < 0 ? 0 : numValue;
+    numValue = numValue > 255 ? 255 : numValue;
+    return numValue;
+}
+
+function updateColorModels(ctx: IColorPickerCtx, red: number, green: number, blue: number) {
+    ctx.hsv = graphics.rgbToHsv({ r: red, g: green, b: blue });
+    ctx.rgb.r = red;
+    ctx.rgb.g = green;
+    ctx.rgb.b = blue;
+    ctx.newPreviewColor = graphics.hsvToHex(ctx.hsv);
+    b.invalidate(ctx);
+}
+
 function getRgbTextFields(ctx: IColorPickerCtx): b.IBobrilNode {
     return b.styledDiv([
         b.styledDiv(m.TextField({
-            labelText: 'red', value: ctx.rgb.r ? ctx.rgb.r.toString() : '0', onChange: (value) => {
-                let red = parseInt(value);
-                red = red ? red : 0;
-                ctx.hsv = graphics.rgbToHsv({ r: red, g: ctx.rgb.g, b: ctx.rgb.b });
-                ctx.rgb.r = red;
-                ctx.newPreviewColor = graphics.hsvToHex(ctx.hsv);
-                b.invalidate(ctx);
+            labelText: 'red', value: ctx.rgb.r.toString(), onChange: (value) => {
+                updateColorModels(ctx, convertInputValue(value), ctx.rgb.g, ctx.rgb.b);
             }
         }), baseMargin, { flex: 1 }),
         b.styledDiv(m.TextField({
-            labelText: 'green', value: ctx.rgb.g ? ctx.rgb.g.toString() : '0', onChange: (value) => {
-                let green = parseInt(value);
-                green = green ? green : 0;
-                ctx.hsv = graphics.rgbToHsv({ r: ctx.rgb.r, g: green, b: ctx.rgb.b });
-                ctx.rgb.g = green;
-                ctx.newPreviewColor = graphics.hsvToHex(ctx.hsv);
-                b.invalidate(ctx);
+            labelText: 'green', value: ctx.rgb.g.toString(), onChange: (value) => {
+                updateColorModels(ctx, ctx.rgb.r, convertInputValue(value), ctx.rgb.b);
             }
         }), baseMargin, { flex: 1 }),
         b.styledDiv(m.TextField({
-            labelText: 'blue', value: ctx.rgb.b ? ctx.rgb.b.toString() : '0', onChange: (value) => {
-                let blue = parseInt(value);
-                blue = blue ? blue : 0;
-                console.log(graphics.rgbToHsv({ r: ctx.rgb.r, g: ctx.rgb.g, b: blue }));
-                ctx.hsv = graphics.rgbToHsv({ r: ctx.rgb.r, g: ctx.rgb.g, b: blue });
-                ctx.rgb.b = blue;
-                ctx.newPreviewColor = graphics.hsvToHex(ctx.hsv);
-                b.invalidate(ctx);
+            labelText: 'blue', value: ctx.rgb.b.toString(), onChange: (value) => {
+                updateColorModels(ctx, ctx.rgb.r, ctx.rgb.g, convertInputValue(value));
             }
         }), baseMargin, { flex: 1 })
     ], { display: 'flex' });
