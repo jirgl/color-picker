@@ -12,6 +12,7 @@ const baseMargin = b.styleDef({ marginLeft: 5, marginRight: 5 });
 export interface IColorPickerData {
     color?: string;
     width?: number;
+    hideTextfields?: boolean;
     onColorSelect: (string) => void;
     onClose: () => void;
 }
@@ -65,7 +66,8 @@ function updateColorModels(ctx: IColorPickerCtx, red: number, green: number, blu
     b.invalidate(ctx);
 }
 
-function getRgbTextFields(ctx: IColorPickerCtx): b.IBobrilNode {
+function getTextfields(ctx: IColorPickerCtx): b.IBobrilNode {
+    if (!!ctx.data.hideTextfields) return;
     return b.styledDiv([
         b.styledDiv(m.TextField({
             labelText: 'hex', value: ctx.newPreviewColor, onChange: (value) => {
@@ -134,7 +136,7 @@ export const ColorPicker = b.createComponent<IColorPickerData>({
         me.children = m.Paper({ zDepth: 1, style: { width: ctx.data.width || '100%' } }, [
             getHsvPreview(ctx),
             getColorBar(ctx),
-            getRgbTextFields(ctx),
+            getTextfields(ctx),
             getBaseAndCurrentPreview(ctx),
             getButtons(ctx)
         ]);

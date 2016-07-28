@@ -13,6 +13,13 @@ b.init(() => {
             width: 300,
             onClose: () => { },
             onColorSelect: (color) => { }
+        }), { padding: 30, flex: 1 }),
+        b.styledDiv(ColorPicker({
+            color: '#00ff00',
+            hideTextfields: true,
+            width: 300,
+            onClose: () => { },
+            onColorSelect: (color) => { }
         }), { padding: 30, flex: 1 })
     ], { display: 'flex' });
 });
