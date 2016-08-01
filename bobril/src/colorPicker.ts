@@ -21,7 +21,7 @@ interface IColorPickerCtx extends b.IBobrilCtx {
     data: IColorPickerData;
     hsv: hsv;
     rgb: rgb;
-    currentPreviewColor: hex;
+    oldPreviewColor: hex;
     newPreviewColor: hex;
 }
 
@@ -101,7 +101,13 @@ function getTextfields(ctx: IColorPickerCtx): b.IBobrilNode {
 function getBaseAndCurrentPreview(ctx: IColorPickerCtx): b.IBobrilNode {
     if (ctx.data.color) {
         return b.styledDiv([
-            b.styledDiv(ColorPreview({ color: ctx.currentPreviewColor }), baseMargin, { flex: 1 }),
+            b.styledDiv(ColorPreview({
+                color: ctx.oldPreviewColor,
+                onClick: () => {
+                    const rgb = graphics.hexToRgb(ctx.oldPreviewColor);
+                    updateColorModels(ctx, rgb.r, rgb.g, rgb.b);
+                }
+            }), baseMargin, { flex: 1 }),
             b.styledDiv(ColorPreview({ color: ctx.newPreviewColor }), baseMargin, { flex: 1 }),
         ], { display: 'flex', marginTop: 20 });
     } else {
@@ -129,7 +135,7 @@ export const ColorPicker = b.createComponent<IColorPickerData>({
         const baseColor = ctx.data.color ? graphics.hexToRgb(ctx.data.color) : defaultColor;
         ctx.rgb = baseColor;
         ctx.hsv = graphics.rgbToHsv(baseColor);
-        ctx.currentPreviewColor = graphics.rgbToHex(baseColor);
+        ctx.oldPreviewColor = graphics.rgbToHex(baseColor);
         ctx.newPreviewColor = graphics.rgbToHex(baseColor);
     },
     render(ctx: IColorPickerCtx, me: b.IBobrilNode) {
