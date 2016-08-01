@@ -25,6 +25,10 @@ function updateColor(ctx: IColorBarCtx, position: number): void {
     ctx.data.onColorSelect((position - riderSize) / (ctx.width - riderSize * 2) * 360);
 }
 
+function isPositionValid(ctx: IColorBarCtx, position: number): boolean {
+    return position >= riderSize && position <= ctx.width - riderSize;
+}
+
 export const ColorBar = b.createComponent<IColorBarData>({
     render(ctx: IColorBarCtx, me: b.IBobrilNode) {
         const rgb = graphics.hsvToRgb({ h: ctx.data.hue, s: 1, v: 1 });
@@ -55,9 +59,13 @@ export const ColorBar = b.createComponent<IColorBarData>({
         ctx.width = element.offsetWidth;
     },
     onPointerDown(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
+        const position = event.x - b.nodePagePos(ctx.me)[0];
+        if (!isPositionValid(ctx, position))
+            return false;
+
         if (!ctx.touch) {
             ctx.touch = true;
-            updateColor(ctx, event.x - b.nodePagePos(ctx.me)[0]);
+            updateColor(ctx, position);
             ctx.pointerId = event.id;
             b.registerMouseOwner(ctx);
             b.focus(ctx.me);
@@ -67,7 +75,7 @@ export const ColorBar = b.createComponent<IColorBarData>({
     },
     onPointerMove(ctx: IColorBarCtx, event: b.IBobrilPointerEvent): boolean {
         const position = event.x - b.nodePagePos(ctx.me)[0];
-        if (position < riderSize || position > ctx.width - riderSize)
+        if (!isPositionValid(ctx, position))
             return false;
 
         if (ctx.touch && ctx.pointerId == event.id) {
