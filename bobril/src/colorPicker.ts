@@ -103,12 +103,13 @@ function getBaseAndCurrentPreview(ctx: IColorPickerCtx): b.IBobrilNode {
         return b.styledDiv([
             b.styledDiv(ColorPreview({
                 color: ctx.oldPreviewColor,
+                label: 'old one',
                 onClick: () => {
                     const rgb = graphics.hexToRgb(ctx.oldPreviewColor);
                     updateColorModels(ctx, rgb.r, rgb.g, rgb.b);
                 }
             }), baseMargin, { flex: 1 }),
-            b.styledDiv(ColorPreview({ color: ctx.newPreviewColor }), baseMargin, { flex: 1 }),
+            b.styledDiv(ColorPreview({ color: ctx.newPreviewColor, label: 'new one' }), baseMargin, { flex: 1 }),
         ], { display: 'flex', marginTop: 20 });
     } else {
         return b.styledDiv(ColorPreview({ color: ctx.newPreviewColor }), baseMargin, { marginTop: 20 });
