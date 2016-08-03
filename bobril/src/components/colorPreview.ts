@@ -1,5 +1,5 @@
 import * as b from 'bobril';
-import { hex, hexToRgb, rgbToHex, getContrastColorFromRgb } from 'jirgl-graphics';
+import { hex, hexToRgb, rgbToHex, getContrastColorFromRgb, GradientType } from 'jirgl-graphics';
 
 export interface IColorPreviewData {
     color: hex;
@@ -15,9 +15,9 @@ interface IColorPreviewCtx extends b.IBobrilCtx {
 function getLabel(label: string, color: hex): b.IBobrilNode {
     return label
         ? b.styledDiv(label, {
-            color: rgbToHex(getContrastColorFromRgb(hexToRgb(color))),
+            color: rgbToHex(getContrastColorFromRgb(hexToRgb(color), GradientType.Linear)),
             textAlign: 'center',
-            padding: 5
+            padding: 6
         })
         : null;
 }

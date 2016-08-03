@@ -12,6 +12,7 @@ const baseMargin = b.styleDef({ marginLeft: 5, marginRight: 5 });
 export interface IColorPickerData {
     color?: string;
     width?: number;
+    hidePreviewLabels?: boolean;
     hideTextfields?: boolean;
     onColorSelect: (string) => void;
     onClose: () => void;
@@ -103,13 +104,16 @@ function getBaseAndCurrentPreview(ctx: IColorPickerCtx): b.IBobrilNode {
         return b.styledDiv([
             b.styledDiv(ColorPreview({
                 color: ctx.oldPreviewColor,
-                label: 'old one',
+                label: ctx.data.hidePreviewLabels ? null : 'old one',
                 onClick: () => {
                     const rgb = graphics.hexToRgb(ctx.oldPreviewColor);
                     updateColorModels(ctx, rgb.r, rgb.g, rgb.b);
                 }
             }), baseMargin, { flex: 1 }),
-            b.styledDiv(ColorPreview({ color: ctx.newPreviewColor, label: 'new one' }), baseMargin, { flex: 1 }),
+            b.styledDiv(ColorPreview({
+                color: ctx.newPreviewColor,
+                label: ctx.data.hidePreviewLabels ? null : 'new one'
+            }), baseMargin, { flex: 1 }),
         ], { display: 'flex', marginTop: 20 });
     } else {
         return b.styledDiv(ColorPreview({ color: ctx.newPreviewColor }), baseMargin, { marginTop: 20 });

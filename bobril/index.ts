@@ -16,6 +16,7 @@ b.init(() => {
         }), { padding: 30, flex: 1 }),
         b.styledDiv(ColorPicker({
             color: '#00ff00',
+            hidePreviewLabels: true,
             hideTextfields: true,
             width: 300,
             onClose: () => { },
