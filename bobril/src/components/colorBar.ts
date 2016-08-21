@@ -1,6 +1,6 @@
 import * as b from 'bobril';
 import * as graphics from 'jirgl-graphics';
-import { ColorRider, riderSize } from './colorRider';
+import { ColorRider, riderSize, riderBorder } from './colorRider';
 
 export interface IColorBarData {
     hue: number;
@@ -15,7 +15,7 @@ interface IColorBarCtx extends b.IBobrilCtx {
 }
 
 function getPosition(ctx: IColorBarCtx): number {
-    let position = (ctx.data.hue + riderSize) / 360 * (ctx.width - riderSize * 2);
+    let position = (ctx.data.hue + riderSize) / 360 * (ctx.width - riderSize * 2) + riderBorder * 2;
     if (position < riderSize) position = riderSize;
     if (position > ctx.width - riderSize) position = ctx.width - riderSize;
     return position;

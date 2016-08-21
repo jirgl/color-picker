@@ -2,6 +2,7 @@ import * as b from 'bobril';
 import { hex, rgb, rgba } from 'jirgl-graphics';
 
 export const riderSize = 15;
+export const riderBorder = 1;
 const innerRadius = riderSize / 2 - 1;
 const outerRadius = 10;
 
@@ -62,7 +63,7 @@ export const ColorRider = b.createComponent<IColorRiderData>({
                         r: innerRadius,
                         fill: d.innerColor ? getStringValue(d.innerColor) : 'transparent',
                         stroke: 'black',
-                        'stroke-width': 1
+                        'stroke-width': riderBorder
                     }
                 }
             ]
