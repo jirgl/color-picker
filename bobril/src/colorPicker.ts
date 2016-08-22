@@ -35,7 +35,7 @@ function getHsvPreview(ctx: IColorPickerCtx): b.IBobrilNode {
             ctx.rgb = graphics.hsvToRgb(hsv);
             b.invalidate(ctx);
         }
-    }), baseMargin, { marginTop: 5 });
+    }), baseMargin, { paddingTop: 5 });
 }
 
 function getColorBar(ctx: IColorPickerCtx): b.IBobrilNode {
