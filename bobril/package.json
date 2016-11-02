@@ -1,5 +1,5 @@
 {
-  "name": "color-picker",
+  "name": "color-picker-bobril",
   "version": "1.0.0",
   "description": "component for selecting specific color",
   "typescript": {
@@ -9,12 +9,10 @@
     "title": "Color picker"
   },
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "color",
-    "colorPicker"
+    "colorPicker",
+    "bobril"
   ],
   "author": "Jakub Jirgl",
   "license": "ISC",
